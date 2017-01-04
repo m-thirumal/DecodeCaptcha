@@ -13,7 +13,7 @@ import org.bytedeco.javacpp.tesseract.TessBaseAPI;
  */
 public class DecodeCaptcha {
 	
-    public static void main( String[] args )  {
+    public String getCaptchInString(String fileName )  {
     	BytePointer outText;
 
         TessBaseAPI api = new TessBaseAPI();
@@ -24,16 +24,18 @@ public class DecodeCaptcha {
         }
 
         // Open input image with leptonica library
-        PIX image = pixRead("test.jpeg");
+        PIX image = pixRead(fileName);
         api.SetImage(image);
         // Get OCR result
         outText = api.GetUTF8Text();
-        String string = outText.getString();
-         System.out.println("OCR output: " + string);
+        String captchaInString = outText.getString();
+        System.out.println("OCR output: " + captchaInString);
 
         // Destroy used object and release memory
         api.End();
         outText.deallocate();
         pixDestroy(image);
+        api.close();
+        return captchaInString.replaceAll("\\s+","");
     }
 }
